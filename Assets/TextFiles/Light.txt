@@ -1,0 +1,99 @@
+MVP Build Strategy - Phase 1: Core Foundation
+Step 1: Scene Setup (30 minutes)
+Start with a completely empty scene and add only the essential networking infrastructure:
+Drag in the NetworkManager_VR_Multiplayer_Template prefab
+Add the XR Interaction Setup (MP Variant) prefab for VR functionality
+Place a simple ground plane and basic lighting
+Add two spawn points 2 meters apart facing each other
+No fancy arenas, no UI, no audio - just the bare minimum to get two VR players connected
+Step 2: Data-Only Match System (2 hours)
+Create the lightweight match architecture without any GameObjects:
+Build a simple RPS_MatchData struct that holds player IDs, round states, and scores
+Create an RPS_MatchManager script that manages pure data (no MonoBehaviour components)
+Implement a basic state machine: Waiting → Countdown → Playing → Results → Waiting
+Store matches in a simple dictionary - each match is just data, not objects in the scene
+Step 3: Minimal Gesture Detection (1 hour)
+Implement the simplest possible hand tracking:
+Use the existing XR Hands data from your template
+Create basic gesture recognition using finger curl values only
+Three states: Fist (Rock), Open Hand (Paper), Two Fingers (Scissors)
+No complex algorithms, no confidence thresholds - just simple position checks
+Only detect gestures during the "shoot" moment, not continuously
+Step 4: Basic Networking (1 hour)
+Leverage your existing networking but keep it minimal:
+Use Unity's built-in RPCs for gesture submission
+Send only essential data: player ID, gesture type, timestamp
+Implement simple server authority - host validates all gestures and determines winners
+No anti-cheat, no lag compensation - just basic networked communication
+Step 5: Text-Only UI (30 minutes)
+Create the absolute minimum interface using simple TextMeshPro components:
+One floating text showing countdown: "3... 2... 1... SHOOT!"
+One text showing current round: "Round 1 of 3"
+One text showing scores: "Player 1: 0 | Player 2: 1"
+One text showing results: "Rock beats Scissors - Player 1 Wins!"
+All UI floats in world space, no fancy positioning or animations
+Step 6: Two-Player Matchmaking (30 minutes)
+Implement the simplest possible player pairing:
+When a player joins, add them to a waiting queue
+When two players are in queue, instantly create a match between them
+No lobby selection, no room browsing - just automatic pairing
+Players are automatically teleported to the spawn points when matched
+MVP Testing Strategy
+Test 1: Single Machine (Day 1)
+Use ParrelSync or MPPM to run two Unity editor instances
+Verify two VR players can connect and see each other
+Test basic gesture detection without networking
+Confirm UI displays correctly in VR space
+Test 2: Local Network (Day 2)
+Test on two separate VR headsets on same WiFi
+Verify gesture data transmits correctly between clients
+Test complete Bo3 match flow from start to finish
+Measure basic performance metrics (framerate, latency)
+Test 3: Internet Connection (Day 3)
+Test between headsets on different networks using Unity Relay
+Verify networking remains stable with real internet latency
+Test edge cases: disconnections, rejoining, simultaneous gestures
+MVP Success Criteria
+Core Functionality
+Two players can join automatically and be matched together
+Both players see synchronized countdown timer
+Hand gestures are detected reliably for Rock, Paper, Scissors
+Winner determination works correctly for all 9 possible combinations
+Bo3 scoring tracks properly (first to win 2 rounds wins match)
+Players can play multiple matches in sequence
+Performance Targets
+Maintains 72+ FPS in VR throughout entire match
+Gesture detection latency under 100ms
+Network sync keeps countdown within 50ms between players
+Match uses less than 10MB memory total
+Can support 5+ concurrent matches on single host
+User Experience
+Match takes 60-90 seconds total (including countdown and results)
+Gesture detection feels responsive and accurate
+Results are clearly communicated to both players
+No confusing states or broken game flow
+What to Deliberately Exclude from MVP
+Visual Polish
+No 3D gesture previews or fancy visual effects
+No arena environments or decorative elements
+No particle effects, animations, or transitions
+No custom materials, shaders, or lighting effects
+Audio System
+No countdown audio cues or sound effects
+No victory/defeat sounds or ambient audio
+No voice chat integration during matches
+Advanced Features
+No spectator mode or match replay
+No player statistics tracking or leaderboards
+No tournament brackets or ranking systems
+No customizable avatars or player profiles
+Optimization
+No object pooling or memory management
+No LOD systems or performance scaling
+No regional server selection or load balancing
+Development Timeline
+Day 1: Foundation - Scene setup, basic networking, simple UI
+Day 2: Core Logic - Match system, gesture detection, game flow
+Day 3: Testing - Bug fixes, basic optimization, multi-device testing
+Day 4: Polish - UI improvements, better gesture tuning, edge case handling
+This MVP approach gets you to a playable Rock Paper Scissors game in 4 days while establishing the lightweight architecture needed for massive scaling later. Once this works reliably with 2 players, you can incrementally add more matches, better UI, and eventually scale to hundreds of concurrent games.
